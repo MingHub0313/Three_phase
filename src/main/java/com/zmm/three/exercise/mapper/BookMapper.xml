@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zmm.three.exercise.mapper.BookMapper">
+	<resultMap type="Book" id="baseResultMap">
+		<id column="ID" property="id"/>
+		<result column="NAME" property="name"/>
+		<result column="AUTHOR" property="author"/>
+		<result column="PUBLISH" property="publish" />
+		<result column="PUBLISHDATE" property="publishdate" />
+		<result column="PAGE" property="page" />
+		<result column="PRICE" property="price" />
+		<result column="CONTENT" property="content" />
+	</resultMap>
+	
+	<!-- 获取全部图书 -->
+	<select id="selectAllBook" resultType="Book">
+		select id,name,author,publish,publishdate,page,price,content from book
+	</select>
+	
+	<!-- 新增图书 -->
+	<insert id="addBook" parameterType="Book">
+		insert into book (name,author,publish,publishdate,page,price,content)
+		values (#{name},#{author},#{publish},#{publishdate},#{page},#{price},#{content})
+	</insert>
+	
+	<!-- 根据Id查询图书 -->
+	<select id="getBookById" parameterType="int" resultType="Book">
+		select id,name,author,publish,publishdate,page,price,content from book where id=#{id}
+	</select>
+	
+	<!-- 修改图书 -->
+	<update id="updateBook" parameterType="Book">
+		update book set name=#{name},author=#{author},publish=#{publish},publishdate=#{publishdate},
+		page=#{page},price=#{price},content=#{content} where id=#{id}
+	</update>
+	
+	<!-- 删除图书 -->
+	<delete id="deleteBook" parameterType="int">
+		delete from book where id=#{id} 
+	</delete>
+	
+	<!--分页展示图书  -->
+	<select id="selectBookByPage" resultType="Book">
+		select id,name,author,publish,publishdate,page,price,content from book 
+		ORDER BY publishdate DESC limit #{offset},#{limit}
+	</select>
+	
+	<!--获取总数  -->
+	<select id="totalBooks" resultType="int">
+		select count(*) from book
+	</select>
+	
+	<!-- 搜索分页 -->
+	<select id="selectBookBySearchByPage" parameterType="Map"  resultType="Book">
+		select id,name,author,publish,publishdate,page,price,content from book where 1=1
+		<if test="search != null and search !=''">
+			AND name like concat('%',#{search},'%')
+		</if>
+		ORDER BY publishdate DESC limit #{offset},#{limit}
+	</select>
+	
+	<!-- 搜索后的总数 -->
+	<select id="totalSearchBook" parameterType="Book" resultType="int" >
+		select count(*) from book where 1=1
+		<if test="search != null and search !=''">
+			AND name like concat('%',#{search},'%')
+		</if>
+	</select>
+</mapper>
